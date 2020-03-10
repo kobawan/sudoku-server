@@ -17,7 +17,11 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
   },
-  error => console.log("Mongoose error:", error)
+  error => {
+    if (error) {
+      console.error(error);
+    }
+  }
 );
 mongoose.connection.once("open", () => {
   console.log("Connected to Database 🚦");
