@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Sudoku server",
   "main": "dist/index.js",
+  "engines": {
+    "node": "12.6.0"
+  },
   "scripts": {
     "eslint": "eslint src/**/*.ts  --max-warnings 0",
     "prettier:fix": "prettier src/**/*.ts --write",

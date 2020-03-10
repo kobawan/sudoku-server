@@ -8,8 +8,8 @@ To win the game, each of the nine grids has to contain all the numbers 1-9 withi
 Under server folder create the file `.env` and in it write: `DB_URL={YOUR_MONGODB_URL}`
 
 ```
-cd server
 npm install
+npm run build
 npm start
 ```
 
