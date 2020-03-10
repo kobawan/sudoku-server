@@ -7,24 +7,33 @@ import compression from "compression";
 import bodyParser from "body-parser";
 
 import { router } from "./config/routes";
+import { Logger } from "./logger/logger";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const isProdEnv = process.env.NODE_ENV === "production";
+
+const DATABASE_URL = isProdEnv
+  ? process.env.DB_URL_PROD
+  : process.env.DB_URL_DEV;
+
 mongoose.connect(
-  process.env.DB_URL || "",
+  DATABASE_URL || "",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   },
   error => {
     if (error) {
-      console.error(error);
+      Logger.error(error);
     }
   }
 );
 mongoose.connection.once("open", () => {
-  console.log("Connected to Database 🚦");
+  Logger.info(
+    `Connected to database ${isProdEnv ? "'sudoku-prod'" : "'sudoku-dev'"} 🚦`
+  );
 });
 
 app.use(compression());
@@ -40,5 +49,5 @@ app.use(cors());
 app.use(router);
 
 app.listen(PORT, () => {
-  console.log("Listening on port", PORT);
+  Logger.info("Listening on port", PORT);
 });

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import UserModel from "../models/user";
+import { Logger } from "../logger/logger";
 
 export class UserController {
   public static async getUser(req: Request, res: Response): Promise<Response> {
@@ -11,6 +12,7 @@ export class UserController {
       }
       return res.json(user);
     } catch (error) {
+      Logger.error("UserController - getUser:", error);
       return res.json(error);
     }
   }
@@ -26,6 +28,7 @@ export class UserController {
       await newGame.save();
       return res.json(newGame.id);
     } catch (error) {
+      Logger.error("UserController - registerUser:", error);
       return res.json(error);
     }
   }
@@ -44,6 +47,7 @@ export class UserController {
       await user.save();
       return res.json(res.status);
     } catch (error) {
+      Logger.error("UserController - saveGame:", error);
       return res.json(error);
     }
   }
