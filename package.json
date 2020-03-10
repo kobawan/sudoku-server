@@ -9,7 +9,6 @@
     "lint": "npm run prettier:fix && npm run eslint",
     "prebuild": "npm run eslint",
     "build": "tsc",
-    "prestart": "npm run build",
     "start": "node ./dist/index.js"
   },
   "author": "Sara Nordmyr da Cunha",
