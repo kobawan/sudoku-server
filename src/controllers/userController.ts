@@ -60,11 +60,11 @@ export class UserController {
           gameType: Joi.number(),
           difficulty: Joi.number(),
           ratio: Joi.number(),
-          matrix: [Joi.number()],
-          mask: [Joi.number()],
+          matrix: Joi.array().items(Joi.number()),
+          mask: Joi.array().items(Joi.number()),
         }),
       });
-      const { error } = schema.validate(req.params, { presence: "required" });
+      const { error } = schema.validate(req.body, { presence: "required" });
       if (error) {
         throw new ValidationError(error.details[0].message);
       }
