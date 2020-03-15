@@ -1,12 +1,15 @@
+/* eslint-disable import/first */
 import dotenv from "dotenv";
+
 dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import compression from "compression";
 import bodyParser from "body-parser";
 
-import { router } from "./config/routes";
+import { router } from "./routes/userRoutes";
 import { Logger } from "./logger/logger";
 
 const app = express();

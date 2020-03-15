@@ -75,7 +75,7 @@ export class UserController {
         throw new UserNotFoundError();
       }
 
-      user["game"] = {
+      user.game = {
         state,
         config,
       };
