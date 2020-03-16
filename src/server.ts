@@ -3,16 +3,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
-import compression from "compression";
-import bodyParser from "body-parser";
-
-import { router } from "./routes/userRoutes";
 import { Logger } from "./logger/logger";
+import app from "./app";
 
-const app = express();
 const PORT = process.env.PORT || 4000;
 
 const isProdEnv = process.env.NODE_ENV === "production";
@@ -38,18 +32,6 @@ mongoose.connection.once("open", () => {
     `Connected to database ${isProdEnv ? "'sudoku-prod'" : "'sudoku-dev'"} 🚦`
   );
 });
-
-app.use(compression());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-app.use(bodyParser.json());
-
-app.use(cors());
-
-app.use(router);
 
 app.listen(PORT, () => {
   Logger.info("Listening on port", PORT);
