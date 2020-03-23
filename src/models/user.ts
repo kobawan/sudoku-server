@@ -27,7 +27,11 @@ const UserSchema = new Schema<User>({
         matrix: [Number],
         mask: [Number],
       },
-      state: String,
+      state: {
+        cellMode: String,
+        cellProps: String,
+        gamePhase: Number,
+      },
     },
     default: null,
   },

@@ -53,7 +53,11 @@ export class UserController {
     try {
       const schema = Joi.object({
         id: Joi.string(),
-        state: Joi.string(),
+        state: Joi.object({
+          cellMode: Joi.string(),
+          cellProps: Joi.string(),
+          gamePhase: Joi.number(),
+        }),
         config: Joi.object({
           gameType: Joi.number(),
           difficulty: Joi.number(),
