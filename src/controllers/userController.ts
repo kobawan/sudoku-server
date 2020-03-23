@@ -35,12 +35,10 @@ export class UserController {
     res: Response
   ): Promise<Response> {
     try {
-      const newGame = new UserModel({
-        game: {},
-      });
-      await newGame.save();
+      const user = new UserModel();
+      await user.save();
 
-      return res.json(newGame.id);
+      return res.json(user.id);
     } catch (error) {
       Logger.error("UserController - registerUser:", error);
 

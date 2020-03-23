@@ -19,14 +19,17 @@ interface UserModel extends User, Document {}
 
 const UserSchema = new Schema<User>({
   game: {
-    config: {
-      gameType: Number,
-      difficulty: Number,
-      ratio: Number,
-      matrix: [Number],
-      mask: [Number],
+    type: {
+      config: {
+        gameType: Number,
+        difficulty: Number,
+        ratio: Number,
+        matrix: [Number],
+        mask: [Number],
+      },
+      state: String,
     },
-    state: String,
+    default: null,
   },
 });
 
