@@ -1,95 +1,125 @@
 import { Request, Response } from "express";
-import Joi from "@hapi/joi";
+import argon2 from "argon2";
 
 import UserModel from "../models/user";
 import { Logger } from "../logger/logger";
 import { UserNotFoundError, ValidationError } from "../errors/errors";
+import { HTTPStatusCode } from "../errors/codes";
+
+const isDuplicateNameError = (error: any) =>
+  error.name === "MongoError" && error.code === 11000;
+
+const isValidationError = (error: any) =>
+  error.name === "ValidationError" ||
+  isDuplicateNameError(error) ||
+  !!error.isValidationError;
+
+const validatePassword = async (username: string, password: string) => {
+  const user = await UserModel.findOne({ username }).select("password");
+  if (!user) {
+    return false;
+  }
+
+  return argon2.verify(user.password, password);
+};
+
+const editErrorMessage = (error: any, username: string) => {
+  if (isDuplicateNameError(error)) {
+    return `The username '${username}' already exists`;
+  }
+
+  if (isValidationError(error)) {
+    const splitMsg = error.message.split(":");
+    return splitMsg[splitMsg.length - 1].trim();
+  }
+
+  return error.message;
+};
 
 export class UserController {
   public static async getUser(req: Request, res: Response): Promise<Response> {
-    try {
-      const schema = Joi.object({ id: Joi.string() });
-      const { error } = schema.validate(req.params, { presence: "required" });
-      if (error) {
-        throw new ValidationError(error.details[0].message);
-      }
+    const { username, password } = req.body || {};
 
-      const user = await UserModel.findById(req.params.id);
+    try {
+      const user = await UserModel.findOne({ username });
       if (!user) {
         throw new UserNotFoundError();
       }
+      const validPassword = await validatePassword(username, password);
+      if (!validPassword) {
+        throw new ValidationError("Incorrect password");
+      }
 
-      return res.json(user);
+      return res.status(HTTPStatusCode.OK).json({
+        type: "success",
+        user,
+      });
     } catch (error) {
       Logger.error("UserController - getUser:", error);
 
-      return res.json({
-        message: error.message,
-        status: error.status,
+      return res.status(HTTPStatusCode.OK).json({
+        type: "fail",
+        message: editErrorMessage(error, username),
+        isValidationError: isValidationError(error),
       });
     }
   }
 
   public static async registerUser(
-    _req: Request,
+    req: Request,
     res: Response
   ): Promise<Response> {
-    try {
-      const user = new UserModel();
-      await user.save();
+    const { username, password } = req.body || {};
 
-      return res.json(user.id);
+    try {
+      const user = await UserModel.create({
+        username,
+        password: await argon2.hash(password),
+      });
+
+      return res.status(HTTPStatusCode.CREATED).json({
+        type: "success",
+        user,
+      });
     } catch (error) {
       Logger.error("UserController - registerUser:", error);
+      const isValError = isValidationError(error);
 
-      return res.json({
-        message: error.message,
-        status: error.status,
+      return res.status(HTTPStatusCode.OK).json({
+        type: "fail",
+        message: editErrorMessage(error, username),
+        isValidationError: isValError,
       });
     }
   }
 
   public static async saveGame(req: Request, res: Response): Promise<Response> {
     try {
-      const schema = Joi.object({
-        id: Joi.string(),
-        state: Joi.object({
-          cellMode: Joi.string(),
-          cellProps: Joi.string(),
-          gamePhase: Joi.number(),
-        }),
-        config: Joi.object({
-          gameType: Joi.number(),
-          difficulty: Joi.number(),
-          ratio: Joi.number(),
-          matrix: Joi.array().items(Joi.number()),
-          mask: Joi.array().items(Joi.number()),
-        }),
-      });
-      const { error } = schema.validate(req.body, { presence: "required" });
-      if (error) {
-        throw new ValidationError(error.details[0].message);
-      }
-
       const { state, config, id } = req.body;
-      const user = await UserModel.findById(id);
+      const user = await UserModel.findByIdAndUpdate(
+        id,
+        {
+          gameState: state,
+          gameConfig: config,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
       if (!user) {
         throw new UserNotFoundError();
       }
 
-      user.game = {
-        state,
-        config,
-      };
-      await user.save();
-
-      return res.json(null);
+      return res.status(HTTPStatusCode.OK).json({
+        type: "success",
+      });
     } catch (error) {
       Logger.error("UserController - saveGame:", error);
 
-      return res.json({
+      return res.status(HTTPStatusCode.OK).json({
+        type: "fail",
         message: error.message,
-        status: error.status,
       });
     }
   }

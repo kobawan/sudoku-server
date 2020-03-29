@@ -1,6 +1,6 @@
 module.exports = {
   env: {
-    browser: true,
+    node: true,
     es6: true,
   },
   extends: [
@@ -18,10 +18,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module",
-    project: "./tsconfig.json",
-    tsconfigRootDir: "./",
   },
   plugins: ["@typescript-eslint"],
+  ignorePatterns: ["scripts/"],
   settings: {
     "import/resolver": {
       typescript: {},
@@ -34,6 +33,7 @@ module.exports = {
     "class-methods-use-this": 0,
     "lines-between-class-members": 0,
     "no-console": 0,
+    "no-param-reassign": 0,
     "import/prefer-default-export": 0,
     "node/no-unsupported-features/es-syntax": [
       "error",
