@@ -37,6 +37,31 @@ const editErrorMessage = (error: any, username: string) => {
 };
 
 export class UserController {
+  public static async getUserFromId(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
+    try {
+      const user = await UserModel.findById(req.params.id);
+      if (!user) {
+        throw new UserNotFoundError();
+      }
+
+      return res.status(HTTPStatusCode.OK).json({
+        type: "success",
+        user,
+      });
+    } catch (error) {
+      Logger.error("UserController - getUser:", error);
+
+      return res.status(HTTPStatusCode.OK).json({
+        type: "fail",
+        message: error.message,
+        isValidationError: isValidationError(error),
+      });
+    }
+  }
+
   public static async getUser(req: Request, res: Response): Promise<Response> {
     const { username, password } = req.body || {};
 
