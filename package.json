@@ -2,7 +2,7 @@
   "name": "sudoku-server",
   "version": "1.0.0",
   "description": "Sudoku server",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "engines": {
     "node": ">=12.6.0"
   },
@@ -12,8 +12,8 @@
     "lint": "npm run prettier:fix && npm run eslint",
     "prebuild": "npm run eslint",
     "build": "tsc",
-    "start": "PORT=5000 ts-node-dev --respawn --transpileOnly src/server.ts",
-    "start:prod": "node ./dist/server.js",
+    "start": "ts-node-dev --respawn --transpileOnly src/server.ts",
+    "start:prod": "node dist/src/server.js",
     "deploy": "npm run build && git push heroku master"
   },
   "repository": {
