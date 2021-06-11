@@ -16,6 +16,10 @@
     "start:prod": "node ./dist/server.js",
     "deploy": "npm run build && git push heroku master"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kobawan/sudoku-server.git"
+  },
   "author": "Sara Nordmyr da Cunha",
   "license": "ISC",
   "dependencies": {
@@ -42,14 +46,12 @@
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "^7.19.0",
     "prettier": "^1.19.1",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.5"
